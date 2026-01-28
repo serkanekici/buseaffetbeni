@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Özür Dilerim Busem 💖</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: radial-gradient(circle at center, #2b0a1f, #000);
+      overflow: hidden;
+    }
+
+    /* Candle glow */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at center, rgba(255,200,120,0.25), transparent 60%);
+      animation: flicker 4s infinite alternate;
+      pointer-events: none;
+    }
+    @keyframes flicker { from {opacity:.6;} to {opacity:.9;} }
+
+    .card {
+      background: rgba(255,255,255,0.9);
+      padding: 36px 30px 44px;
+      border-radius: 24px;
+      text-align: center;
+      box-shadow: 0 20px 40px rgba(0,0,0,.3);
+      max-width: 720px;
+      width: 92%;
+      position: relative;
+      z-index: 2;
+    }
+
+    h1 {
+      font-size: clamp(28px, 5vw, 56px);
+      margin: 0 0 12px;
+      color: #d6336c;
+    }
+    p {
+      font-size: clamp(16px, 2.5vw, 20px);
+      margin-bottom: 28px;
+      color: #333;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 24px;
+      justify-content: center;
+      margin-top: 10px;
+    }
+
+    button {
+      border: none;
+      padding: 14px 26px;
+      font-size: 18px;
+      border-radius: 999px;
+      cursor: pointer;
+      box-shadow: 0 10px 18px rgba(0,0,0,.2);
+      transition: transform .15s ease;
+    }
+    button:hover { transform: translateY(-2px); }
+
+    #forgive {
+      background: linear-gradient(135deg, #ff6b9a, #ff3d81);
+      color: #fff;
+      z-index: 3;
+    }
+
+    #nope {
+      background: #f1f3f5;
+      color: #555;
+      position: fixed;
+      z-index: 3;
+    }
+
+    /* Warning */
+    .warning {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255,255,255,.95);
+      padding: 10px 18px;
+      border-radius: 999px;
+      font-size: 16px;
+      color: #c2255c;
+      box-shadow: 0 10px 20px rgba(0,0,0,.25);
+      animation: shake .4s;
+      z-index: 5;
+    }
+    @keyframes shake {
+      0%{transform:translateX(-50%) translateX(0);}25%{transform:translateX(-50%) translateX(-6px);}50%{transform:translateX(-50%) translateX(6px);}75%{transform:translateX(-50%) translateX(-6px);}100%{transform:translateX(-50%) translateX(0);} }
+
+    /* Effects */
+    .heart, .petal, .firework, .ring {
+      left:50%; top:50%;
+      transform:translate(-50%,-50%) scale(0);
+      font-size:96px;
+      animation:ringPop 2.5s ease forwards;
+      z-index: 10;
+    }
+    @keyframes ringPop {
+      40%{transform:translate(-50%,-50%) scale(1.2);}100%{transform:translate(-50%,-50%) scale(1);} }
+
+    .thanks {
+      margin-top: 24px;
+      font-size: 22px;
+      color: #c2255c;
+      opacity: 0;
+      animation: fadeIn 2s forwards;
+    }
+    @keyframes fadeIn { to {opacity:1;} }
+
+    .music-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #fff;
+      padding: 10px 16px;
+      border-radius: 999px;
+      cursor: pointer;
+      z-index: 6;
+    }
+  </style>
+</head>
+<body>
+
+<audio id="bgm" loop>
+  <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_5c2e0d4c45.mp3?filename=romantic-piano-112191.mp3" type="audio/mpeg">
+</audio>
+
+<div class="music-btn" id="musicToggle">🎵 Müzik Aç / Kapat</div>
+
+<div class="card">
+  <h1>Özür dilerim Busem 🙏</h1>
+  <p>Seni çok seviyorum. Lütfen beni affet 💗</p>
+  <div class="buttons">
+    <button id="forgive">Affettim 💖</button>
+    <button id="nope">Affetmedim 😅</button>
+  </div>
+</div>
+
+<script>
+  const forgiveBtn = document.getElementById('forgive');
+  const nopeBtn = document.getElementById('nope');
+  const music = document.getElementById('bgm');
+  const musicToggle = document.getElementById('musicToggle');
+
+  // music
+  document.body.addEventListener('click', ()=>music.play().catch(()=>{}), {once:true});
+  musicToggle.onclick = (e)=>{ e.stopPropagation(); music.paused?music.play():music.pause(); };
+
+  // dodge button
+  function dodge(){
+    const x = Math.random()*(window.innerWidth-nopeBtn.offsetWidth);
+    const y = Math.random()*(window.innerHeight-nopeBtn.offsetHeight);
+    nopeBtn.style.left = x+'px';
+    nopeBtn.style.top = y+'px';
+    showWarning();
+  }
+  nopeBtn.addEventListener('mouseenter', dodge);
+  nopeBtn.addEventListener('click', dodge);
+
+  function showWarning(){
+    const w = document.createElement('div');
+    w.className='warning';
+    w.textContent='Emin misin? 😏';
+    document.body.appendChild(w);
+    setTimeout(()=>w.remove(),1200);
+  }
+
+  // forgive
+  forgiveBtn.onclick = ()=>{
+    celebrate(); ring(); petals();
+    forgiveBtn.textContent='Seni seviyorum 💞';
+    nopeBtn.style.display='none';
+    const t=document.createElement('div'); t.className='thanks'; t.textContent='Teşekkür ederim sevgilim 💌';
+    document.querySelector('.card').appendChild(t);
+  };
+
+  function celebrate(){
+    for(let i=0;i<30;i++){
+      setTimeout(()=>{
+        const h=document.createElement('div'); h.className='heart';
+        h.style.left=Math.random()*innerWidth+'px'; h.style.bottom='-20px';
+        document.body.appendChild(h); setTimeout(()=>h.remove(),4000);
+      },i*80);
+    }
+    for(let i=0;i<10;i++){
+      setTimeout(()=>{
+        const f=document.createElement('div'); f.className='firework';
+        f.style.background=['#ffbe0b','#fb5607','#ff006e','#8338ec','#3a86ff'][Math.floor(Math.random()*5)];
+        f.style.left=Math.random()*innerWidth+'px'; f.style.top=Math.random()*innerHeight*0.6+'px';
+        document.body.appendChild(f); setTimeout(()=>f.remove(),1500);
+      },i*120);
+    }
+  }
+
+  function ring(){ const r=document.createElement('div'); r.className='ring'; r.textContent='💍'; document.body.appendChild(r); setTimeout(()=>r.remove(),3000); }
+  function petals(){ for(let i=0;i<40;i++){ setTimeout(()=>{ const p=document.createElement('div'); p.className='petal'; p.style.left=Math.random()*innerWidth+'px'; document.body.appendChild(p); setTimeout(()=>p.remove(),7000); },i*120);} }
+
+  dodge();
+</script>
+</body>
+</html>
